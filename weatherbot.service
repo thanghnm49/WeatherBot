@@ -1,0 +1,19 @@
+[Unit]
+Description=WeatherBot Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/weatherbot
+Environment="NODE_ENV=production"
+ExecStart=/usr/bin/node /opt/weatherbot/bot.js
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=weatherbot
+
+[Install]
+WantedBy=multi-user.target
+

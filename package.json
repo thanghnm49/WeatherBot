@@ -1,0 +1,29 @@
+{
+  "name": "weatherbot",
+  "version": "1.0.0",
+  "description": "A Telegram bot to check weather using OpenWeather API",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node bot.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop weatherbot",
+    "pm2:restart": "pm2 restart weatherbot",
+    "pm2:logs": "pm2 logs weatherbot",
+    "pm2:delete": "pm2 delete weatherbot"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "weather",
+    "openweather"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.64.0",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  }
+}
+
