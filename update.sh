@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WeatherBot Update Script
-# Use this script to update the bot on your VPS
+# Use this script to update the bot on your VPS from GitHub
 
 set -e
 
@@ -18,6 +18,17 @@ if [ ! -d "$APP_DIR" ]; then
     exit 1
 fi
 
+# Check if it's a git repository
+if [ ! -d "$APP_DIR/.git" ]; then
+    echo "❌ $APP_DIR is not a git repository"
+    echo "Please set up git repository first:"
+    echo "  cd $APP_DIR"
+    echo "  git init"
+    echo "  git remote add origin https://github.com/yourusername/WeatherBot.git"
+    echo "  git pull origin main"
+    exit 1
+fi
+
 cd $APP_DIR
 
 # Stop bot
@@ -30,17 +41,46 @@ if [ -f "$APP_DIR/.env" ]; then
     cp $APP_DIR/.env $APP_DIR/.env.backup
 fi
 
-# Update files (assuming you're running this from the project directory)
-echo "📦 Updating application files..."
-# Copy all files except .env and logs
-rsync -av --exclude='.env' --exclude='logs' --exclude='node_modules' . $APP_DIR/ 2>/dev/null || {
-    echo "⚠️  rsync not available, using cp..."
-    cp -r bot.js package.json ecosystem.config.js weatherbot.service *.md .gitignore $APP_DIR/ 2>/dev/null || true
-}
+# Pull latest changes from GitHub
+echo "📦 Pulling latest changes from GitHub..."
+git fetch origin
 
-# Restore .env
+# Get current branch name
+CURRENT_BRANCH=$(git branch --show-current)
+if [ -z "$CURRENT_BRANCH" ]; then
+    # Try to detect branch if --show-current doesn't work
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+fi
+
+echo "Current branch: $CURRENT_BRANCH"
+
+# Pull from current branch
+if git pull origin "$CURRENT_BRANCH" 2>/dev/null; then
+    echo "✅ Successfully pulled from branch: $CURRENT_BRANCH"
+else
+    echo "⚠️  Failed to pull from branch: $CURRENT_BRANCH"
+    echo "Trying main/master..."
+    if git pull origin main 2>/dev/null || git pull origin master 2>/dev/null; then
+        echo "✅ Successfully pulled from main/master"
+    else
+        echo "❌ Failed to pull from GitHub. Please check:"
+        echo "   - Repository URL is correct"
+        echo "   - Branch name is correct"
+        echo "   - You have internet connection"
+        echo "   - Git credentials are set up"
+        exit 1
+    fi
+fi
+
+# Restore .env if it was overwritten
 if [ -f "$APP_DIR/.env.backup" ]; then
-    mv $APP_DIR/.env.backup $APP_DIR/.env
+    if [ ! -f "$APP_DIR/.env" ] || ! grep -q "TELEGRAM_BOT_TOKEN" "$APP_DIR/.env" 2>/dev/null; then
+        echo "🔄 Restoring .env file..."
+        mv $APP_DIR/.env.backup $APP_DIR/.env
+    else
+        echo "✅ .env file preserved"
+        rm $APP_DIR/.env.backup
+    fi
 fi
 
 # Install/update dependencies
