@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Environment files (will be passed via env_file or environment)
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs (will be mounted as volume)
+logs/
+*.log
+
+# Docker files (don't need in container)
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Deployment scripts
+deploy.sh
+update.sh
+*.service
+ecosystem.config.js
+
+# Other
+*.sh
+GIT_SETUP.md
+DEPLOYMENT.md
+

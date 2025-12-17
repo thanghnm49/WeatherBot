@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  weatherbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: weatherbot
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+    env_file:
+      - .env
+    volumes:
+      # Mount logs directory to persist logs
+      - ./logs:/app/logs
+    # Note: Health check removed as Telegram bots don't expose HTTP endpoints
+    # Container health can be monitored via logs
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
