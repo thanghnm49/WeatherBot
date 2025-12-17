@@ -17,7 +17,7 @@ COPY . .
 RUN mkdir -p logs
 
 # Expose port (not needed for Telegram bot, but good practice)
-EXPOSE 3000
+#EXPOSE 3000
 
 # Set environment to production
 ENV NODE_ENV=production
