@@ -95,18 +95,21 @@ MIT
 
 ### Docker Deployment (Recommended)
 
-The easiest way to deploy WeatherBot is using Docker:
+The easiest way to deploy WeatherBot is using Docker. **The container automatically pulls the latest code from GitHub every time it starts!**
 
 ```bash
 # Configure .env file
 cp env.example .env
 nano .env
 
-# Start with Docker Compose
+# Start with Docker Compose (auto-pulls from GitHub)
 docker-compose up -d
 
 # View logs
 docker-compose logs -f
+
+# Restart to get latest updates
+docker-compose restart
 ```
 
 See [DOCKER.md](DOCKER.md) for detailed Docker deployment instructions.
@@ -117,10 +120,10 @@ For production deployment on an Ubuntu VPS, see [DEPLOYMENT.md](DEPLOYMENT.md) f
 
 #### Quick Start (VPS)
 
-1. Upload files to your VPS
-2. Run `./deploy.sh` (automated setup)
-3. Configure `.env` file
-4. Bot runs automatically with PM2
+1. Clone repository on your VPS
+2. Configure `.env` file
+3. Run with PM2: `pm2 start ecosystem.config.js`
+4. Or use Docker: `docker-compose up -d` (recommended - auto-updates from GitHub)
 
 #### PM2 Commands
 

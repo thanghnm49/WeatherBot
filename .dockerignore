@@ -43,6 +43,7 @@ ecosystem.config.js
 
 # Other
 *.sh
+!docker-entrypoint.sh
 GIT_SETUP.md
 DEPLOYMENT.md
 

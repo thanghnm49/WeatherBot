@@ -2,6 +2,8 @@
 
 This guide explains how to deploy WeatherBot using Docker and Docker Compose.
 
+**✨ Automatic Updates**: The Docker container automatically pulls the latest code from GitHub (`https://github.com/thanghnm49/WeatherBot.git`) every time it starts!
+
 ## Prerequisites
 
 - Docker installed on your system
@@ -117,31 +119,31 @@ npm run docker:restart
 
 ## Updating the Bot
 
-### Method 1: Using Docker Compose
+The bot **automatically pulls from GitHub** every time the container starts! Just restart the container:
 
 ```bash
-# Pull latest code from GitHub
-git pull origin main
+# Restart container (will auto-pull latest code)
+docker-compose restart
 
-# Rebuild and restart
+# Or stop and start (will pull latest on start)
+docker-compose down
+docker-compose up -d
+```
+
+### Manual Rebuild (if needed)
+
+If you want to force a rebuild:
+
+```bash
+# Rebuild and restart (will pull latest code on start)
 docker-compose up -d --build
 ```
 
-### Method 2: Manual Update
-
-```bash
-# Stop container
-docker-compose down
-
-# Pull latest code
-git pull origin main
-
-# Rebuild image
-docker build -t weatherbot .
-
-# Start container
-docker-compose up -d
-```
+The entrypoint script automatically:
+1. Clones the repository if it doesn't exist
+2. Pulls latest changes from GitHub
+3. Updates dependencies if needed
+4. Starts the bot
 
 ## Docker on VPS
 

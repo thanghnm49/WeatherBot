@@ -1,26 +1,33 @@
 # Use official Node.js runtime as base image
 FROM node:20-alpine
 
+# Install git for repository operations
+RUN apk add --no-cache git
+
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Copy package files (will be updated by entrypoint)
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install dependencies (will be updated by entrypoint)
+RUN npm ci --only=production || true
 
-# Copy application files
+# Copy application files (will be updated by entrypoint)
 COPY . .
 
 # Create logs directory
 RUN mkdir -p logs
 
-# Expose port (not needed for Telegram bot, but good practice)
-#EXPOSE 3000
-
 # Set environment to production
 ENV NODE_ENV=production
+
+# Set entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Run the bot
 CMD ["node", "bot.js"]
