@@ -31,7 +31,7 @@ async function getWeather(cityName) {
         q: cityName,
         appid: OPENWEATHER_API_KEY,
         units: 'metric', // Use metric units (Celsius)
-        lang: 'en'
+        lang: 'vi' // Vietnamese language
       }
     });
 
@@ -53,11 +53,11 @@ async function getWeather(cityName) {
     return weather;
   } catch (error) {
     if (error.response && error.response.status === 404) {
-      throw new Error('City not found. Please check the city name and try again.');
+      throw new Error('Không tìm thấy thành phố. Vui lòng kiểm tra lại tên thành phố và thử lại.');
     } else if (error.response && error.response.status === 401) {
-      throw new Error('Invalid API key. Please check your OpenWeather API key.');
+      throw new Error('API key không hợp lệ. Vui lòng kiểm tra lại OpenWeather API key của bạn.');
     } else {
-      throw new Error('Failed to fetch weather data. Please try again later.');
+      throw new Error('Không thể lấy dữ liệu thời tiết. Vui lòng thử lại sau.');
     }
   }
 }
@@ -79,15 +79,15 @@ function formatWeatherMessage(weather) {
   const weatherEmoji = emoji[weather.icon] || '🌤️';
   
   return `
-${weatherEmoji} <b>Weather in ${weather.city}, ${weather.country}</b>
+${weatherEmoji} <b>Thời tiết tại ${weather.city}, ${weather.country}</b>
 
-🌡️ Temperature: <b>${weather.temperature}°C</b>
-🤔 Feels like: <b>${weather.feelsLike}°C</b>
-📝 Description: <b>${weather.description}</b>
-💧 Humidity: <b>${weather.humidity}%</b>
-📊 Pressure: <b>${weather.pressure} hPa</b>
-💨 Wind Speed: <b>${weather.windSpeed} m/s</b>
-👁️ Visibility: <b>${weather.visibility} km</b>
+🌡️ Nhiệt độ: <b>${weather.temperature}°C</b>
+🤔 Cảm giác như: <b>${weather.feelsLike}°C</b>
+📝 Mô tả: <b>${weather.description}</b>
+💧 Độ ẩm: <b>${weather.humidity}%</b>
+📊 Áp suất: <b>${weather.pressure} hPa</b>
+💨 Tốc độ gió: <b>${weather.windSpeed} m/s</b>
+👁️ Tầm nhìn: <b>${weather.visibility} km</b>
   `.trim();
 }
 
@@ -95,24 +95,24 @@ ${weatherEmoji} <b>Weather in ${weather.city}, ${weather.country}</b>
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const welcomeMessage = `
-🌤️ <b>Welcome to WeatherBot!</b>
+🌤️ <b>Chào mừng đến với WeatherBot!</b>
 
-I can help you check the weather for any city around the world.
+Tôi có thể giúp bạn kiểm tra thời tiết cho bất kỳ thành phố nào trên thế giới.
 
-<b>Commands:</b>
-/start - Show this welcome message
-/help - Show help information
-/weather [city] - Get weather for a city
-/subscribe [city] - Subscribe to hourly weather updates
-/unsubscribe - Unsubscribe from hourly updates
-/status - Check your subscription status
+<b>Các lệnh:</b>
+/start - Hiển thị thông điệp chào mừng
+/help - Hiển thị thông tin trợ giúp
+/weather [thành phố] - Lấy thông tin thời tiết cho một thành phố
+/subscribe [thành phố] - Đăng ký nhận cập nhật thời tiết hàng giờ
+/unsubscribe - Hủy đăng ký nhận cập nhật hàng giờ
+/status - Kiểm tra trạng thái đăng ký của bạn
 
-<b>Example:</b>
+<b>Ví dụ:</b>
+/weather Hà Nội
+/weather Thành phố Hồ Chí Minh
 /weather London
-/weather New York
-/weather Tokyo
 
-Just send me a city name and I'll tell you the weather! 🌍
+Chỉ cần gửi cho tôi tên thành phố và tôi sẽ cho bạn biết thời tiết! 🌍
   `.trim();
 
   bot.sendMessage(chatId, welcomeMessage, { parse_mode: 'HTML' });
@@ -122,21 +122,21 @@ Just send me a city name and I'll tell you the weather! 🌍
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
   const helpMessage = `
-📖 <b>WeatherBot Help</b>
+📖 <b>Trợ giúp WeatherBot</b>
 
-<b>How to use:</b>
-1. Send a city name (e.g., "London" or "New York")
-2. Or use the command: /weather [city name]
+<b>Cách sử dụng:</b>
+1. Gửi tên thành phố (ví dụ: "Hà Nội" hoặc "New York")
+2. Hoặc sử dụng lệnh: /weather [tên thành phố]
 
-<b>Commands:</b>
-/start - Show welcome message
-/help - Show this help message
-/weather [city] - Get weather for a city
-/subscribe [city] - Subscribe to hourly weather updates for a city
-/unsubscribe - Unsubscribe from hourly updates
-/status - Check your subscription status
+<b>Các lệnh:</b>
+/start - Hiển thị thông điệp chào mừng
+/help - Hiển thị thông điệp trợ giúp này
+/weather [thành phố] - Lấy thông tin thời tiết cho một thành phố
+/subscribe [thành phố] - Đăng ký nhận cập nhật thời tiết hàng giờ cho một thành phố
+/unsubscribe - Hủy đăng ký nhận cập nhật hàng giờ
+/status - Kiểm tra trạng thái đăng ký của bạn
 
-<b>Examples:</b>
+<b>Ví dụ:</b>
 /weather Paris
 /weather Moscow
 /subscribe London
@@ -152,12 +152,12 @@ bot.onText(/\/weather (.+)/, async (msg, match) => {
   const cityName = match[1].trim();
 
   if (!cityName) {
-    bot.sendMessage(chatId, 'Please provide a city name. Example: /weather London');
+    bot.sendMessage(chatId, 'Vui lòng cung cấp tên thành phố. Ví dụ: /weather Hà Nội');
     return;
   }
 
   try {
-    const loadingMessage = await bot.sendMessage(chatId, `🔍 Fetching weather for ${cityName}...`);
+    const loadingMessage = await bot.sendMessage(chatId, `🔍 Đang lấy thông tin thời tiết cho ${cityName}...`);
     
     const weather = await getWeather(cityName);
     const weatherMessage = formatWeatherMessage(weather);
@@ -176,22 +176,22 @@ bot.onText(/\/subscribe (.+)/, async (msg, match) => {
   const cityName = match[1].trim();
 
   if (!cityName) {
-    bot.sendMessage(chatId, 'Please provide a city name. Example: /subscribe London');
+    bot.sendMessage(chatId, 'Vui lòng cung cấp tên thành phố. Ví dụ: /subscribe Hà Nội');
     return;
   }
 
   try {
     // Verify the city exists by fetching weather once
-    const loadingMessage = await bot.sendMessage(chatId, `🔍 Verifying city ${cityName}...`);
+    const loadingMessage = await bot.sendMessage(chatId, `🔍 Đang xác minh thành phố ${cityName}...`);
     await getWeather(cityName);
     
     // Subscribe user to hourly updates
     hourlySubscriptions.set(chatId, cityName);
     
     bot.deleteMessage(chatId, loadingMessage.message_id);
-    bot.sendMessage(chatId, `✅ Subscribed to hourly weather updates for <b>${cityName}</b>!\n\nYou will receive weather updates every hour. Use /unsubscribe to stop.`, { parse_mode: 'HTML' });
+    bot.sendMessage(chatId, `✅ Đã đăng ký nhận cập nhật thời tiết hàng giờ cho <b>${cityName}</b>!\n\nBạn sẽ nhận được cập nhật thời tiết mỗi giờ. Sử dụng /unsubscribe để dừng.`, { parse_mode: 'HTML' });
   } catch (error) {
-    bot.sendMessage(chatId, `❌ ${error.message}\n\nPlease check the city name and try again.`);
+    bot.sendMessage(chatId, `❌ ${error.message}\n\nVui lòng kiểm tra lại tên thành phố và thử lại.`);
   }
 });
 
@@ -202,9 +202,9 @@ bot.onText(/\/unsubscribe/, (msg) => {
   if (hourlySubscriptions.has(chatId)) {
     const cityName = hourlySubscriptions.get(chatId);
     hourlySubscriptions.delete(chatId);
-    bot.sendMessage(chatId, `✅ Unsubscribed from hourly weather updates for <b>${cityName}</b>.`, { parse_mode: 'HTML' });
+    bot.sendMessage(chatId, `✅ Đã hủy đăng ký nhận cập nhật thời tiết hàng giờ cho <b>${cityName}</b>.`, { parse_mode: 'HTML' });
   } else {
-    bot.sendMessage(chatId, '❌ You are not subscribed to any hourly updates.');
+    bot.sendMessage(chatId, '❌ Bạn chưa đăng ký nhận cập nhật hàng giờ nào.');
   }
 });
 
@@ -214,9 +214,9 @@ bot.onText(/\/status/, (msg) => {
   
   if (hourlySubscriptions.has(chatId)) {
     const cityName = hourlySubscriptions.get(chatId);
-    bot.sendMessage(chatId, `📊 <b>Subscription Status</b>\n\n✅ Active subscription for: <b>${cityName}</b>\n\nYou will receive weather updates every hour.`, { parse_mode: 'HTML' });
+    bot.sendMessage(chatId, `📊 <b>Trạng thái đăng ký</b>\n\n✅ Đăng ký đang hoạt động cho: <b>${cityName}</b>\n\nBạn sẽ nhận được cập nhật thời tiết mỗi giờ.`, { parse_mode: 'HTML' });
   } else {
-    bot.sendMessage(chatId, '📊 <b>Subscription Status</b>\n\n❌ No active subscription.\n\nUse /subscribe [city] to start receiving hourly weather updates.', { parse_mode: 'HTML' });
+    bot.sendMessage(chatId, '📊 <b>Trạng thái đăng ký</b>\n\n❌ Không có đăng ký nào đang hoạt động.\n\nSử dụng /subscribe [thành phố] để bắt đầu nhận cập nhật thời tiết hàng giờ.', { parse_mode: 'HTML' });
   }
 });
 
@@ -235,7 +235,7 @@ bot.on('message', async (msg) => {
     const cityName = text.trim();
     
     try {
-      const loadingMessage = await bot.sendMessage(chatId, `🔍 Fetching weather for ${cityName}...`);
+      const loadingMessage = await bot.sendMessage(chatId, `🔍 Đang lấy thông tin thời tiết cho ${cityName}...`);
       
       const weather = await getWeather(cityName);
       const weatherMessage = formatWeatherMessage(weather);
@@ -265,7 +265,7 @@ async function sendHourlyUpdates() {
     try {
       const weather = await getWeather(cityName);
       const weatherMessage = formatWeatherMessage(weather);
-      const updateMessage = `⏰ <b>Hourly Weather Update</b>\n\n${weatherMessage}`;
+      const updateMessage = `⏰ <b>Cập nhật thời tiết hàng giờ</b>\n\n${weatherMessage}`;
       
       await bot.sendMessage(chatId, updateMessage, { parse_mode: 'HTML' });
       successCount++;
@@ -275,7 +275,7 @@ async function sendHourlyUpdates() {
       console.error(`[${new Date().toISOString()}] ❌ Error sending update to chat ${chatId} for city ${cityName}:`, error.message);
       // Optionally notify user about the error
       try {
-        await bot.sendMessage(chatId, `❌ Failed to fetch weather update for ${cityName}. ${error.message}`);
+        await bot.sendMessage(chatId, `❌ Không thể lấy cập nhật thời tiết cho ${cityName}. ${error.message}`);
       } catch (sendError) {
         // If we can't send the error message, the user might have blocked the bot
         // Remove subscription if bot is blocked
